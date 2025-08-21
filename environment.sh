@@ -4,7 +4,7 @@
 # portainer
 sudo ufw allow 9443/tcp
 # dashboard
-#sudo ufw allow 8501/tcp
+sudo ufw allow 8501/tcp
 # API
 #sudo ufw allow 8000/tcp
 # PostgresSQL
@@ -15,5 +15,6 @@ sudo ufw reload
 sudo ufw status verbose
 
 # manual steps
-# /etc/ssh/sshd_config
+# sudo vi /etc/ssh/sshd_config
 #   PasswordAuthentication no
+# sudo systemctl restart sshd.service

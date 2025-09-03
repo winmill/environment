@@ -1,0 +1,70 @@
+#cloud-config
+
+package_update: true
+package_upgrade: true
+#package_reboot_if_required: true
+
+groups:
+  - docker
+
+users:
+  - name: username
+    groups:
+      - users
+      - admin
+      - docker
+    lock_passwd: true
+    shell: /bin/bash
+    ssh-authorized-keys:
+      - ssh-ed25519 AAA mykey
+    sudo:
+      - ALL=(ALL) NOPASSWD:ALL
+
+write_files:
+  - path: /etc/ssh/sshd_config
+    content: |
+      PermitRootLogin no
+      PasswordAuthentication no
+      Port 2222
+      ChallengeResponseAuthentication no
+      MaxAuthTries 2
+      AllowTcpForwarding no
+      X11Forwarding no
+      AllowAgentForwarding no
+      AuthorizedKeysFile .ssh/authorized_keys
+      AllowUsers winmill
+
+      LoginGraceTime 20
+      KerberosAuthentication no
+      GSSAPIAuthentication no
+      PubkeyAuthentication yes
+      UsePAM yes
+      PermitUserEnvironment yes
+      PermitTunnel no
+      DebianBanner no
+      MaxStartUps 5:30:10
+      MaxSessions 5
+
+apt:
+  sources:
+    docker.list:
+      source: "deb [arch=amd64] https://download.docker.com/linux/ubuntu $RELEASE stable"
+      keyid: 9DC858229FC7DD38854AE2D88D81803C0EBFCD88
+
+packages:
+  - fail2ban
+  - ufw
+  - docker-ce
+  - docker-ce-cli
+  - containerd.io
+  - docker-compose-plugin
+
+runcmd:
+  - printf "[sshd]\nenabled = true\nport = ssh, 2222\nbanaction = iptables-multiport" > /etc/fail2ban/jail.local
+  - systemctl enable fail2ban
+  - ufw default deny incoming
+  - ufw default allow outgoing
+  - ufw allow 2222/tcp
+  - ufw deny 22/tcp
+  - ufw enable
+  - reboot

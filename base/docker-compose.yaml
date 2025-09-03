@@ -1,6 +1,6 @@
 services:
   cloudflared:
-    image: cloudflare/cloudflared:2025.8.0
+    image: cloudflare/cloudflared:latest
     container_name: cloudflared
     environment:
       - TZ=America/Chicago
@@ -9,7 +9,7 @@ services:
     command: tunnel --no-autoupdate run
 
   portainer:
-    image: portainer/portainer-ce:2.33.0
+    image: portainer/portainer-ce:lts
     container_name: portainer
     # cloudflare tunnel to https://172.17.0.1:9443
     ports:
@@ -30,4 +30,4 @@ services:
 #      - --name=iamfoo
 
 volumes:
-    data:
+  data:

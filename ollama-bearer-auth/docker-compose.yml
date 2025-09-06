@@ -1,0 +1,27 @@
+name: ollama-bearer-auth
+
+services:
+  server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: ollama-bearer-auth-caddy:1
+    container_name: ollama
+    ports:
+      - "8081:8081"
+    environment:
+      - OLLAMA_HOST=0.0.0.0
+    volumes:
+      - ollama_docker_volume:/root/.ollama
+    restart: unless-stopped
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: ["gpu"]
+
+volumes:
+  ollama_docker_volume:
+    name: ollama_docker_volume

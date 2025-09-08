@@ -81,34 +81,43 @@
   ollama pull llama3.2:3b
   ollama run llama3.2:3b
   ```
-
-# Deploy ollama-bearer-auth
+  
+  # Deploy vllm-caddy
 
 - references
-  - https://github.com/bartolli/ollama-bearer-auth-caddy
-  - https://medium.com/@spandanmaity58/authenticate-ollama-server-with-caddy-reverse-proxy-7c619e213ced
+  - https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html
+  - https://docs.vllm.ai/en/stable/deployment/docker.html
+  - https://blog.brianbaldock.net/deploying-local-ai-inference-with-vllm-and-chatui-in-docker
 - confirm drivers loaded
   ```
   nvidia-smi
   ```
-- build
+- start vllm
   ```
-  git clone https://github.com/bartolli/ollama-bearer-auth-caddy.git
-  cd ~/ollama-bearer-auth-caddy
-  ```
-- replace keys in Caddy/valid_keys.conf
-  ```
-  echo "sk-ollama-$(openssl rand -hex 16)"
-  ```
-- build per README
-  ```
-  docker build -t winmill/ollama-bearer-auth-caddy:1 .
-  ```
-- replace `docker-compose.yml`
-- start ollama
-  ```
+  cd ~/environment/vllm-caddy
   docker compose up -d
-  curl -i http://localhost:8081 -H "Authorization: Bearer correct_api_key"
   ```
-- connect to ollama (as above)
-  
+- confirm operation
+  ```
+  curl https://api.sailteam.org/v1/chat/completions \
+    -H 'Authorization: Bearer from-uuidgen' \
+    -H "Content-Type: application/json" \
+    -d '{
+        "model": "Qwen/Qwen3-0.6B",
+        "messages": [
+            {"role": "system", "content": "You are a helpful assistant."},
+            {"role": "user", "content": "Who won the world series in 2020?"}
+        ]
+    }'
+
+  ```
+- connect to vllm
+  ```
+  ```
+- load models
+  ```
+  ```
+
+# jupyter notebook
+- references
+  - https://medium.com/@sabaybiometzger/docker-container-with-jupyter-notebook-and-remote-access-f7cec701fb30

@@ -1,0 +1,49 @@
+services:
+  vllm:
+    image: vllm/vllm-openai:latest
+    container_name: vllm
+    ports:
+      - "8000:8000"
+    volumes:
+      - ~/.cache/huggingface:/root/.cache/huggingface
+    restart: unless-stopped
+    environment:
+      - HUGGING_FACE_HUB_TOKEN=$HF_TOKEN # Optional: for private models
+    ipc: host
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: ["gpu"]
+    runtime: nvidia
+    command:
+      - --model=Qwen/Qwen3-0.6B
+      - --gpu-memory-utilization=0.7
+      - --max-model-len=3264
+      - --max-num-batched-tokens=3264
+      - --trust-remote-code
+    networks:
+      - caddy-net
+
+  caddy:
+    image: caddy:latest
+    container_name: caddy
+    restart: unless-stopped
+    ports:
+      - "8001:8001"
+    volumes:
+      - caddy_data:/data
+      - caddy_config:/config
+      - ./Caddyfile:/etc/caddy/Caddyfile
+    networks:
+      - caddy-net
+
+volumes:
+  caddy_data:
+  caddy_config:
+
+networks:
+  caddy-net:
+    driver: bridge

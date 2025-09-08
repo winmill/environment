@@ -12,6 +12,6 @@ sudo ufw allow 9443/tcp
 # EMQX dashboard
 #sudo ufw allow 18083/tcp
 # caddy
-#sudo ufw allow 11434/tcp
+#sudo ufw allow 8001/tcp
 sudo ufw reload
 sudo ufw status verbose

@@ -1,0 +1,14 @@
+# https://caddy.community/t/using-caddy-to-secure-port/30064/8
+{
+  http_port 8001
+}
+
+:8001 {
+  @apiToken {
+    header Authorization "Bearer from-uuidgen"
+    }
+  handle @apiToken {
+    reverse_proxy vllm:8000
+  }
+  respond "Unauthorized" 401
+}

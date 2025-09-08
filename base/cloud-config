@@ -8,7 +8,7 @@ groups:
   - docker
 
 users:
-  - name: username
+  - name: winmill
     groups:
       - users
       - admin

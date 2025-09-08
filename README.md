@@ -58,18 +58,21 @@
   docker compose up -d
   ```
 
-# Deploy ollama
+# Deploy ollama-caddy
 
 - references
   - https://ollama.com/blog/ollama-is-now-available-as-an-official-docker-image
   - https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html
+- configure service tokens
+  - https://developers.cloudflare.com/cloudflare-one/identity/service-tokens/
+  - https://caddy.community/t/using-caddy-to-secure-port/30064/8
 - confirm drivers loaded
   ```
   nvidia-smi
   ```
 - start ollama
   ```
-  cd ~/environment/ollama
+  cd ~/environment/ollama-caddy
   docker compose up -d
   ```
 - connect to ollama
@@ -83,6 +86,7 @@
 
 - references
   - https://github.com/bartolli/ollama-bearer-auth-caddy
+  - https://medium.com/@spandanmaity58/authenticate-ollama-server-with-caddy-reverse-proxy-7c619e213ced
 - confirm drivers loaded
   ```
   nvidia-smi
@@ -98,7 +102,7 @@
   ```
 - build per README
   ```
-  docker build -t <your_username>/<image_name>:<tag> .
+  docker build -t winmill/ollama-bearer-auth-caddy:1 .
   ```
 - replace `docker-compose.yml`
 - start ollama

@@ -14,7 +14,27 @@ services:
             - driver: nvidia
               count: all
               capabilities: ["gpu"]
+    networks:
+      - ollama-net
+
+  caddy:
+    image: caddy:latest
+    container_name: caddy
+    restart: unless-stopped
+    ports:
+      - "11435:11435"
+    volumes:
+      - caddy_data:/data
+      - caddy_config:/config
+      - ./Caddyfile:/etc/caddy/Caddyfile
+    networks:
+      - ollama-net
 
 volumes:
   ollama_data:
-    name: ollama_data
+  caddy_data:
+  caddy_config:
+
+networks:
+  ollama-net:
+    driver: bridge

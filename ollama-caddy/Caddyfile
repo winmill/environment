@@ -1,0 +1,14 @@
+# https://caddy.community/t/using-caddy-to-secure-port/30064/8
+{
+  http_port 11435
+}
+
+:11435 {
+  @apiToken {
+    header Authorization "Bearer from-uuidgen"
+    }
+  handle @apiToken {
+    reverse_proxy ollama:11434
+  }
+  respond "Unauthorized" 401
+}

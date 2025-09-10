@@ -1,0 +1,73 @@
+services:
+  llama.cpp:
+    image: ghcr.io/ggml-org/llama.cpp:full-cuda
+    container_name: llama.cpp
+    ports:
+      - "8000:8000"
+    volumes:
+      - $HOME/.cache/llama.cpp:/root/.cache/llama.cpp
+    command:
+      - --server
+      - --hf-repo
+      - "ggml-org/gemma-3-1b-it-GGUF"
+      #      - "ggml-org/SmolLM3-3B-GGUF"
+      #      - "ggml-org/gpt-oss-20b-GGUF"
+      - --alias
+      - "gemma-3:1b"
+      #      - "SmolLM3-GGUF"
+      #      - "gpt-oss-20b"
+      #      - --model
+      #      - "/root/.cache/llama.cpp/ggml-org_gemma-3-1b-it-GGUF_gemma-3-1b-it-Q4_K_M.gguf"
+      #      - "/root/.cache/llama.cpp/ggml-org_SmolLM3-3B-GGUF_SmolLM3-Q4_K_M.gguf"
+      - --port
+      - "8000"
+      - --host
+      - "0.0.0.0"
+      - --log-timestamps
+      - --device
+      - "CUDA0"
+      - --no-webui
+      - --api-key
+      - "from from-uuidgen"
+      - --api-key
+      - "from from-uuidgen"
+      - --ctx-size
+      - "327168"
+    #      - --jinja
+    #      - -ub
+    #      - "2048"
+    #      - -b
+    #      - "2048"
+    #      - --n-cpu-moe
+    #      - "16"
+    restart: unless-stopped
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: ["gpu"]
+    networks:
+      - caddy-net
+
+  caddy:
+    image: caddy:latest
+    container_name: caddy
+    restart: unless-stopped
+    ports:
+      - "8001:8001"
+    volumes:
+      - caddy_data:/data
+      - caddy_config:/config
+      - ./Caddyfile:/etc/caddy/Caddyfile
+    networks:
+      - caddy-net
+
+volumes:
+  caddy_data:
+  caddy_config:
+
+networks:
+  caddy-net:
+    driver: bridge

@@ -2,6 +2,7 @@
 
 - references
   - https://docs.docker.com/engine/install/ubuntu/
+  - https://packetpushers.net/blog/ubuntu-extend-your-default-lvm-space/
 - pull environment
   ```
   cd ~

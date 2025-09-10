@@ -3,6 +3,7 @@
 - references
   - https://docs.vllm.ai/en/stable/deployment/docker.html
   - https://blog.brianbaldock.net/deploying-local-ai-inference-with-vllm-and-chatui-in-docker
+  - https://ploomber.io/blog/vllm-deploy/
 - install nvidia drivers 550
   - https://documentation.ubuntu.com/server/how-to/graphics/install-nvidia-drivers/
   ```
@@ -35,11 +36,25 @@
             {"role": "user", "content": "Who won the world series in 2020?"}
         ]
     }'
-
   ```
 - connect to vllm
   ```
+    docker run --runtime nvidia --gpus all \
+    -v ~/.cache/huggingface:/root/.cache/huggingface \
+    -p 23333:23333 \
+    --ipc=host \
+    openmmlab/lmdeploy:latest \
+    lmdeploy serve api_server Qwen/Qwen3-0.6B    
   ```
-- load models
+- bug in Triton library
   ```
+  #https://github.com/unslothai/unsloth/issues/2491#issuecomment-3141648812
+  uv pip install -U "triton>=3.4.0"
+
+  vllm serve Qwen/Qwen3-0.6B --dtype float16 --gpu-memory-utilization 0.8 --max-model-len=3264 --max-num-batched-tokens=3264
+
+  docker build . \
+    -t vllm-gpu-image \
+    --build-arg max_jobs=8 --build-arg nvcc_threads=2 \
+    --file docker/Dockerfile
   ```

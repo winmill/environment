@@ -1,6 +1,7 @@
 # Deploy llama.cpp-caddy
 
 - references
+  - https://documentation.ubuntu.com/server/how-to/graphics/install-nvidia-drivers/
   - https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html
 - info on llama.cpp
   - https://blog.steelph0enix.dev/posts/llama-cpp-guide/

@@ -3,6 +3,15 @@
 - references
   - https://docs.docker.com/engine/install/ubuntu/
   - https://packetpushers.net/blog/ubuntu-extend-your-default-lvm-space/
+- expand drive
+  ```
+  df -h
+  sudo lvdisplay
+  sudo lvextend -l +100%FREE /dev/ubuntu-vg/ubuntu-lv
+  sudo lvdisplay
+  sudo resize2fs /dev/mapper/ubuntu--vg-ubuntu--lv
+  df -h
+  ```
 - pull environment
   ```
   cd ~

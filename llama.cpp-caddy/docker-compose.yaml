@@ -28,11 +28,11 @@ services:
       - "CUDA0"
       - --no-webui
       - --api-key
-      - "from from-uuidgen"
-      - --api-key
-      - "from from-uuidgen"
+      - "from-uuidgen"
+      #  - --api-key
+      #  - "from-uuidgen"
       - --ctx-size
-      - "327168"
+      - "32768"
     #      - --jinja
     #      - -ub
     #      - "2048"

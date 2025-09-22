@@ -13,5 +13,7 @@ sudo ufw allow 9443/tcp
 #sudo ufw allow 18083/tcp
 # caddy
 #sudo ufw allow 8001/tcp
+# beszel-agent
+sudo ufw allow 45876/tcp
 sudo ufw reload
 sudo ufw status verbose

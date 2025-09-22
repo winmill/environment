@@ -1,45 +1,35 @@
 services:
-  llama.cpp:
+  llama.cpp1:
     image: ghcr.io/ggml-org/llama.cpp:full-cuda
-    container_name: llama.cpp
+    container_name: llama.cpp1
     ports:
       - "8000:8000"
     volumes:
-      - $HOME/.cache/llama.cpp:/root/.cache/llama.cpp
+      - ~/.cache/llama.cpp:/root/.cache/llama.cpp
     command:
       - --server
       - --hf-repo
-      - "ggml-org/gemma-3-1b-it-GGUF"
-      #      - "ggml-org/SmolLM3-3B-GGUF"
-      #      - "ggml-org/gpt-oss-20b-GGUF"
+      - "ggml-org/gpt-oss-20b-GGUF"
       - --alias
-      - "gemma-3:1b"
-      #      - "SmolLM3-GGUF"
-      #      - "gpt-oss-20b"
-      #      - --model
-      #      - "/root/.cache/llama.cpp/ggml-org_gemma-3-1b-it-GGUF_gemma-3-1b-it-Q4_K_M.gguf"
-      #      - "/root/.cache/llama.cpp/ggml-org_SmolLM3-3B-GGUF_SmolLM3-Q4_K_M.gguf"
+      - "gpt-oss:20b"
       - --port
       - "8000"
       - --host
       - "0.0.0.0"
       - --log-timestamps
       - --device
-      - "CUDA0"
+      - "CUDA1"
       - --no-webui
       - --api-key
       - "from-uuidgen"
-      #  - --api-key
-      #  - "from-uuidgen"
       - --ctx-size
       - "32768"
-    #      - --jinja
-    #      - -ub
-    #      - "2048"
-    #      - -b
-    #      - "2048"
-    #      - --n-cpu-moe
-    #      - "16"
+      - --jinja
+      - -ub
+      - "4096"
+      - -b
+      - "4096"
+      - --no-warmup
     restart: unless-stopped
     deploy:
       resources:
@@ -51,12 +41,63 @@ services:
     networks:
       - caddy-net
 
+  llama.cpp0:
+    image: ghcr.io/ggml-org/llama.cpp:full-cuda
+    container_name: llama.cpp0
+    ports:
+      - "8002:8002"
+    volumes:
+      - ~/.cache/llama.cpp:/root/.cache/llama.cpp
+    command:
+      - --server
+      - --hf-repo
+      - "ggml-org/gemma-3-1b-it-GGUF"
+      - --alias
+      - "gemma-3:1b"
+      - --port
+      - "8002"
+      - --host
+      - "0.0.0.0"
+      - --log-timestamps
+      - --device
+      - "CUDA0"
+      - --no-webui
+      - --api-key
+      - "from-uuidgen"
+      - --no-warmup
+    restart: unless-stopped
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: ["gpu"]
+    networks:
+      - caddy-net
+
+  # open-webui:
+  #   image: ghcr.io/open-webui/open-webui:main
+  #   container_name: open-webui
+  #   ports:
+  #     - "8080:8080"
+  #   volumes:
+  #     - ~/data:/app/backend/data
+  #   # environment:
+  #   #     - "QDRANT_API_KEY=API_KEY_HERE"
+  #   #     - "QDRANT_URI=https://example.com"
+  #   restart: unless-stopped
+  #   networks:
+  #     - caddy-net
+
   caddy:
     image: caddy:latest
     container_name: caddy
     restart: unless-stopped
     ports:
       - "8001:8001"
+      - "8003:8003"
+      # - "8081:8081"
     volumes:
       - caddy_data:/data
       - caddy_config:/config

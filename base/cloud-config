@@ -28,11 +28,11 @@ write_files:
       Port 2222
       ChallengeResponseAuthentication no
       MaxAuthTries 2
-      AllowTcpForwarding no
+      AllowTcpForwarding yes
       X11Forwarding no
       AllowAgentForwarding no
       AuthorizedKeysFile .ssh/authorized_keys
-      AllowUsers winmill
+      AllowUsers winmill mike
 
       LoginGraceTime 20
       KerberosAuthentication no

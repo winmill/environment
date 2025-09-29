@@ -3,6 +3,8 @@
 - references
   - https://docs.docker.com/engine/install/ubuntu/
   - https://packetpushers.net/blog/ubuntu-extend-your-default-lvm-space/
+  - https://documentation.ubuntu.com/server/how-to/software/automatic-updates/
+  - https://www.kolide.com/features/checks/ubuntu-unattended-upgrades
 - expand drive
   ```
   df -h
@@ -31,6 +33,11 @@
   - PasswordAuthentication no
   ```
   sudo systemctl restart sshd.service
+  ```
+- enable automated updates
+  ```
+  sudo apt-get install unattended-upgrades -y
+  sudo dpkg-reconfigure -plow unattended-upgrades
   ```
 - start tunnel and portainer
   ```

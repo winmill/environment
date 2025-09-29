@@ -19,6 +19,23 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
     restart: unless-stopped
 
+  watchtower:
+    image: containrrr/watchtower
+    container_name: watchtower
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      WATCHTOWER_MONITOR_ONLY: "true"
+      WATCHTOWER_NOTIFICATIONS: email
+      WATCHTOWER_NOTIFICATION_EMAIL_FROM: email.from
+      WATCHTOWER_NOTIFICATION_EMAIL_TO: email.to
+      WATCHTOWER_NOTIFICATION_EMAIL_SERVER: smtp.gmail.com
+      WATCHTOWER_NOTIFICATION_EMAIL_SERVER_PORT: 587
+      WATCHTOWER_NOTIFICATION_EMAIL_SERVER_USER: email.from
+      WATCHTOWER_NOTIFICATION_EMAIL_SERVER_PASSWORD: gmail.password
+      WATCHTOWER_NOTIFICATION_EMAIL_DELAY: 2
+
+  # on clients
   beszel-agent:
     image: henrygd/beszel-agent
     container_name: beszel-agent
@@ -36,6 +53,42 @@ services:
       TOKEN:
         "token"
         # HUB_URL: http://localhost:8090
+
+# on server machine
+#  beszel:
+#    image: henrygd/beszel
+#    container_name: beszel
+#    restart: unless-stopped
+#    ports:
+#      - 8090:8090
+#    volumes:
+#      - ~/beszel_data:/beszel_data
+#      - ~/beszel_socket:/beszel_socket
+
+#  beszel-agent:
+#    image: henrygd/beszel-agent-nvidia
+#    container_name: beszel-agent
+#    restart: unless-stopped
+#    network_mode: host
+#    volumes:
+#      - /var/run/docker.sock:/var/run/docker.sock:ro
+#      - ~/beszel_agent_data:/var/lib/beszel-agent
+#      - ~/beszel_socket:/beszel_socket
+#      # monitor other disks / partitions by mounting a folder in /extra-filesystems
+#      # - /mnt/disk/.beszel:/extra-filesystems/sda1:ro
+#    environment:
+#      LISTEN: /beszel_socket/beszel.socket
+#      KEY: "ssh-ed25519 key"
+#      TOKEN: "token"
+#      HUB_URL: http://localhost:8090
+#    deploy:
+#      resources:
+#        reservations:
+#          devices:
+#            - driver: nvidia
+#              count: all
+#              capabilities:
+#                - utility
 
 #  whoami:
 #    image: traefik/whoami:v1.11

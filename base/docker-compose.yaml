@@ -20,24 +20,28 @@ services:
     restart: unless-stopped
 
   watchtower:
-    image: containrrr/watchtower
+    image: containrrr/watchtower:latest
     container_name: watchtower
+    restart: unless-stopped
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
+      - /etc/localtime:/etc/localtime:ro
     environment:
-      WATCHTOWER_MONITOR_ONLY: "true"
+      WATCHTOWER_CLEANUP: true
+      WATCHTOWER_SCHEDULE: "0 0 7 * * *"
+      WATCHTOWER_NOTIFICATION_EMAIL_SUBJECTTAG: "servername"
       WATCHTOWER_NOTIFICATIONS: email
-      WATCHTOWER_NOTIFICATION_EMAIL_FROM: email.from
-      WATCHTOWER_NOTIFICATION_EMAIL_TO: email.to
+      WATCHTOWER_NOTIFICATION_EMAIL_FROM: fromaddress@gmail.com
+      WATCHTOWER_NOTIFICATION_EMAIL_TO: toaddress@yahoo.com
       WATCHTOWER_NOTIFICATION_EMAIL_SERVER: smtp.gmail.com
       WATCHTOWER_NOTIFICATION_EMAIL_SERVER_PORT: 587
-      WATCHTOWER_NOTIFICATION_EMAIL_SERVER_USER: email.from
-      WATCHTOWER_NOTIFICATION_EMAIL_SERVER_PASSWORD: gmail.password
+      WATCHTOWER_NOTIFICATION_EMAIL_SERVER_USER: fromaddress@gmail.com
+      WATCHTOWER_NOTIFICATION_EMAIL_SERVER_PASSWORD: ${EMAIL_PASS}
       WATCHTOWER_NOTIFICATION_EMAIL_DELAY: 2
 
   # on clients
   beszel-agent:
-    image: henrygd/beszel-agent
+    image: henrygd/beszel-agent:latest
     container_name: beszel-agent
     restart: unless-stopped
     network_mode: host
@@ -49,14 +53,12 @@ services:
       # - /mnt/disk/.beszel:/extra-filesystems/sda1:ro
     environment:
       LISTEN: 45876
-      KEY: "ssh-ed25519 key"
-      TOKEN:
-        "token"
-        # HUB_URL: http://localhost:8090
+      KEY: ${BESZEL_KEY}
+      TOKEN: ${BESZEL_TOKEN}
 
 # on server machine
 #  beszel:
-#    image: henrygd/beszel
+#    image: henrygd/beszel:latest
 #    container_name: beszel
 #    restart: unless-stopped
 #    ports:
@@ -66,7 +68,7 @@ services:
 #      - ~/beszel_socket:/beszel_socket
 
 #  beszel-agent:
-#    image: henrygd/beszel-agent-nvidia
+#    image: henrygd/beszel-agent-nvidia:latest
 #    container_name: beszel-agent
 #    restart: unless-stopped
 #    network_mode: host
@@ -78,8 +80,8 @@ services:
 #      # - /mnt/disk/.beszel:/extra-filesystems/sda1:ro
 #    environment:
 #      LISTEN: /beszel_socket/beszel.socket
-#      KEY: "ssh-ed25519 key"
-#      TOKEN: "token"
+#      KEY: ${BESZEL_KEY}
+#      TOKEN: ${BESZEL_TOKEN}
 #      HUB_URL: http://localhost:8090
 #    deploy:
 #      resources:

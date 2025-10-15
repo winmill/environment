@@ -11,7 +11,7 @@ services:
       - --hf-repo
       - "ggml-org/gpt-oss-20b-GGUF"
       - --alias
-      - "gpt-oss:20b"
+      - "model1"
       - --port
       - "8000"
       - --host
@@ -21,7 +21,7 @@ services:
       - "CUDA1"
       - --no-webui
       - --api-key
-      - "from-uuidgen"
+      - "365016d2-ee13-4634-ba92-72ca23dc9813"
       - --ctx-size
       - "32768"
       - --jinja
@@ -29,7 +29,6 @@ services:
       - "4096"
       - -b
       - "4096"
-      - --no-warmup
     restart: unless-stopped
     deploy:
       resources:
@@ -51,9 +50,9 @@ services:
     command:
       - --server
       - --hf-repo
-      - "ggml-org/gemma-3-1b-it-GGUF"
+      - "ggml-org/gemma-3-4b-it-GGUF"
       - --alias
-      - "gemma-3:1b"
+      - "model0"
       - --port
       - "8002"
       - --host
@@ -63,8 +62,9 @@ services:
       - "CUDA0"
       - --no-webui
       - --api-key
-      - "from-uuidgen"
-      - --no-warmup
+      - "365016d2-ee13-4634-ba92-72ca23dc9813"
+      - --ctx-size
+      - "8192"
     restart: unless-stopped
     deploy:
       resources:
@@ -76,19 +76,18 @@ services:
     networks:
       - caddy-net
 
-  # open-webui:
-  #   image: ghcr.io/open-webui/open-webui:main
-  #   container_name: open-webui
-  #   ports:
-  #     - "8080:8080"
-  #   volumes:
-  #     - ~/data:/app/backend/data
-  #   # environment:
-  #   #     - "QDRANT_API_KEY=API_KEY_HERE"
-  #   #     - "QDRANT_URI=https://example.com"
-  #   restart: unless-stopped
-  #   networks:
-  #     - caddy-net
+  open-webui:
+    image: ghcr.io/open-webui/open-webui:main
+    container_name: open-webui
+    ports:
+      - "8080:8080"
+    volumes:
+      - ~/data/open-webui_data:/app/backend/data
+    environment:
+      #     - "QDRANT_API_KEY=API_KEY_HERE"
+      #     - "QDRANT_URI=https://example.com"
+      - ENABLE_ADMIN_CHAT_ACCESS=false
+    restart: unless-stopped
 
   caddy:
     image: caddy:latest
@@ -97,17 +96,12 @@ services:
     ports:
       - "8001:8001"
       - "8003:8003"
-      # - "8081:8081"
     volumes:
-      - caddy_data:/data
-      - caddy_config:/config
+      - ~/data/caddy_data/data:/data
+      - ~/data/caddy_data/config:/config
       - ./Caddyfile:/etc/caddy/Caddyfile
     networks:
       - caddy-net
-
-volumes:
-  caddy_data:
-  caddy_config:
 
 networks:
   caddy-net:

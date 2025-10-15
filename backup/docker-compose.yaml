@@ -1,0 +1,66 @@
+services:
+  backup:
+    image: mazzolino/restic
+    container_name: restic
+    hostname: ${HOSTNAME}
+    restart: unless-stopped
+    environment:
+      RUN_ON_STARTUP: "true" #change as you wish
+      BACKUP_CRON: "0 3 * * *" #this is twice daily, i.e., every 12 hours
+      RESTIC_PASSWORD: ${PASSWORD}
+      RESTIC_REPOSITORY: ${REPOSITORY}
+      AWS_ACCESS_KEY_ID: ${ACCESS_KEY_ID}
+      AWS_SECRET_ACCESS_KEY: ${SECRET_ACCESS_KEY}
+      RESTIC_BACKUP_SOURCES: /data /environment
+      RESTIC_COMPRESSION: auto
+      RESTIC_BACKUP_ARGS: >-
+        --verbose
+        --exclude-file /exclude.txt
+      RESTIC_FORGET_ARGS: >- #change as required
+        --keep-last 10
+        --keep-daily 7
+        --keep-weekly 5
+        --keep-monthly 12
+      TZ: America/Chicago
+    volumes:
+      - ~/tmp-for-restore:/tmp-for-restore #USE THIS FOLDER FOR RESTORE - CAN VIEW EACH CONTAINER
+      - ./exclude.txt:/exclude.txt
+      # folders to backup
+      - ~/data:/data:ro
+      - ~/environment:/environment:/ro
+    security_opt:
+      - no-new-privileges:true
+
+  prune:
+    image: mazzolino/restic
+    container_name: restic-prune
+    hostname: ${HOSTNAME}
+    restart: unless-stopped
+    environment:
+      RUN_ON_STARTUP: "true"
+      PRUNE_CRON: "0 0 4 * * *"
+      RESTIC_PASSWORD: ${PASSWORD}
+      RESTIC_REPOSITORY: ${REPOSITORY}
+      AWS_ACCESS_KEY_ID: ${ACCESS_KEY_ID}
+      AWS_SECRET_ACCESS_KEY: ${SECRET_ACCESS_KEY}
+      TZ: America/Chicago
+    security_opt:
+      - no-new-privileges:true
+
+  check:
+    image: mazzolino/restic
+    container_name: restic-check
+    hostname: ${HOSTNAME}
+    restart: unless-stopped
+    environment:
+      RUN_ON_STARTUP: "false"
+      CHECK_CRON: "0 15 5 * * *"
+      RESTIC_CHECK_ARGS: >-
+        --read-data-subset=10%
+      RESTIC_PASSWORD: ${PASSWORD}
+      RESTIC_REPOSITORY: ${REPOSITORY}
+      AWS_ACCESS_KEY_ID: ${ACCESS_KEY_ID}
+      AWS_SECRET_ACCESS_KEY: ${SECRET_ACCESS_KEY}
+      TZ: America/Chicago
+    security_opt:
+      - no-new-privileges:true

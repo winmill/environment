@@ -11,6 +11,13 @@ services:
       - N8N_BASIC_AUTH_PASSWORD=password
       - N8N_PUBLIC_API_DISABLED=true
       - N8N_PUBLIC_API_SWAGGERUI_DISABLED=true
+      - N8N_EMAIL_MODE=smtp
+      - N8N_SMTP_HOST=smtp.gmail.com
+      - N8N_SMTP_PORT=587
+      - N8N_SMTP_USER=fromaddress@gmail.com
+      - N8N_SMTP_PASS=${EMAIL_PASS}
+      - N8N_SMTP_SENDER=fromaddress@gmail.com
+      - N8N_SMTP_SSL=false
     volumes:
-      - ./n8n_data:/home/node/.n8n
+      - ./data/n8n_data:/home/node/.n8n
     restart: unless-stopped

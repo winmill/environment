@@ -1,0 +1,7 @@
+# exclude files
+
+# exclude directories
+open-webui_data/vector_db
+open-webui_data/cache
+meilisearch_data
+open-webui_data/uploads

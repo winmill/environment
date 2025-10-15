@@ -5,7 +5,3 @@
 :8003 {
   reverse_proxy llama.cpp0:8002
 }
-
-:8081 {
-  reverse_proxy open-webui:8080
-}
